@@ -832,7 +832,7 @@ ID_INLINE bool idStr::EndsWith(const char* suffix) const {
 }
 
 ID_INLINE bool idStr::StartsWith(const char* prefix) const {
-	int prefixLen = strlen(prefix);
+	size_t prefixLen = strlen(prefix);
 	if (this->len < prefixLen) {
 		return false;
 	}

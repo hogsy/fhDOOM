@@ -63,6 +63,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define ID_INLINE						__forceinline
 #define ID_STATIC_TEMPLATE				static
+#define ID_INLINE_EXTERN				extern ID_INLINE
 
 #define assertmem( x, y )				assert( _CrtIsValidPointer( x, y, true ) )
 
@@ -120,6 +121,8 @@ typedef enum {
 	CPUID_SSE2							= 0x00080,	// Streaming SIMD Extensions 2
 	CPUID_SSE3							= 0x00100,	// Streaming SIMD Extentions 3 aka Prescott's New Instructions
 	CPUID_ALTIVEC						= 0x00200,	// AltiVec
+	CPUID_SSE41							= 0x00400,	// Streaming SIMD Extension 4.1
+	CPUID_SSE42							= 0x00800,	// Streaming SIMD Extension 4.2
 	CPUID_HTT							= 0x01000,	// Hyper-Threading Technology
 	CPUID_CMOV							= 0x02000,	// Conditional Move (CMOV) and fast floating point comparison (FCOMI) instructions
 	CPUID_FTZ							= 0x04000,	// Flush-To-Zero mode (denormal results are flushed to zero)
@@ -257,9 +260,6 @@ const char *	Sys_GetProcessorString( void );
 // returns true if the FPU stack is empty
 bool			Sys_FPU_StackIsEmpty( void );
 
-// empties the FPU stack
-void			Sys_FPU_ClearStack( void );
-
 // returns the FPU state as a string
 const char *	Sys_FPU_GetState( void );
 
@@ -268,9 +268,6 @@ void			Sys_FPU_EnableExceptions( int exceptions );
 
 // sets the FPU precision
 void			Sys_FPU_SetPrecision( int precision );
-
-// sets the FPU rounding mode
-void			Sys_FPU_SetRounding( int rounding );
 
 // sets Flush-To-Zero mode (only available when CPUID_FTZ is set)
 void			Sys_FPU_SetFTZ( bool enable );
@@ -302,7 +299,6 @@ void			Sys_SetPhysicalWorkMemory( int minBytes, int maxBytes );
 void			Sys_GetCallStack( address_t *callStack, const int callStackSize );
 const char *	Sys_GetCallStackStr( const address_t *callStack, const int callStackSize );
 const char *	Sys_GetCallStackCurStr( int depth );
-const char *	Sys_GetCallStackCurAddressStr( int depth );
 void			Sys_ShutdownSymbols( void );
 
 // DLL loading, the path should be a fully qualified OS path to the DLL file to be loaded

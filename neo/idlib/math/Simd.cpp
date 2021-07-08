@@ -30,12 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Simd_Generic.h"
-#include "Simd_MMX.h"
-#include "Simd_3DNow.h"
 #include "Simd_SSE.h"
-#include "Simd_SSE2.h"
-#include "Simd_SSE3.h"
-#include "Simd_AltiVec.h"
 
 
 idSIMDProcessor	*	processor = NULL;			// pointer to SIMD processor
@@ -73,18 +68,8 @@ void idSIMD::InitProcessor( const char *module, bool forceGeneric ) {
 	} else {
 
 		if ( !processor ) {
-			if ( ( cpuid & CPUID_ALTIVEC ) ) {
-				processor = new idSIMD_AltiVec;
-			} else if ( ( cpuid & CPUID_MMX ) && ( cpuid & CPUID_SSE ) && ( cpuid & CPUID_SSE2 ) && ( cpuid & CPUID_SSE3 ) ) {
-				processor = new idSIMD_SSE3;
-			} else if ( ( cpuid & CPUID_MMX ) && ( cpuid & CPUID_SSE ) && ( cpuid & CPUID_SSE2 ) ) {
-				processor = new idSIMD_SSE2;
-			} else if ( ( cpuid & CPUID_MMX ) && ( cpuid & CPUID_SSE ) ) {
+			if ( ( cpuid & CPUID_MMX ) && ( cpuid & CPUID_SSE ) ) {
 				processor = new idSIMD_SSE;
-			} else if ( ( cpuid & CPUID_MMX ) && ( cpuid & CPUID_3DNOW ) ) {
-				processor = new idSIMD_3DNow;
-			} else if ( ( cpuid & CPUID_MMX ) ) {
-				processor = new idSIMD_MMX;
 			} else {
 				processor = generic;
 			}
@@ -141,7 +126,7 @@ idSIMDProcessor *p_simd;
 idSIMDProcessor *p_generic;
 long baseClocks = 0;
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_M_IX86)
 
 #define TIME_TYPE int
 
@@ -4112,42 +4097,12 @@ void idSIMD::Test_f( const idCmdArgs &args ) {
 
 		argString.Replace( " ", "" );
 
-		if ( idStr::Icmp( argString, "MMX" ) == 0 ) {
-			if ( !( cpuid & CPUID_MMX ) ) {
-				common->Printf( "CPU does not support MMX\n" );
-				return;
-			}
-			p_simd = new idSIMD_MMX;
-		} else if ( idStr::Icmp( argString, "3DNow" ) == 0 ) {
-			if ( !( cpuid & CPUID_MMX ) || !( cpuid & CPUID_3DNOW ) ) {
-				common->Printf( "CPU does not support MMX & 3DNow\n" );
-				return;
-			}
-			p_simd = new idSIMD_3DNow;
-		} else if ( idStr::Icmp( argString, "SSE" ) == 0 ) {
+		if ( idStr::Icmp( argString, "SSE" ) == 0 ) {
 			if ( !( cpuid & CPUID_MMX ) || !( cpuid & CPUID_SSE ) ) {
 				common->Printf( "CPU does not support MMX & SSE\n" );
 				return;
 			}
 			p_simd = new idSIMD_SSE;
-		} else if ( idStr::Icmp( argString, "SSE2" ) == 0 ) {
-			if ( !( cpuid & CPUID_MMX ) || !( cpuid & CPUID_SSE ) || !( cpuid & CPUID_SSE2 ) ) {
-				common->Printf( "CPU does not support MMX & SSE & SSE2\n" );
-				return;
-			}
-			p_simd = new idSIMD_SSE2;
-		} else if ( idStr::Icmp( argString, "SSE3" ) == 0 ) {
-			if ( !( cpuid & CPUID_MMX ) || !( cpuid & CPUID_SSE ) || !( cpuid & CPUID_SSE2 ) || !( cpuid & CPUID_SSE3 ) ) {
-				common->Printf( "CPU does not support MMX & SSE & SSE2 & SSE3\n" );
-				return;
-			}
-			p_simd = new idSIMD_SSE3();
-		} else if ( idStr::Icmp( argString, "AltiVec" ) == 0 ) {
-			if ( !( cpuid & CPUID_ALTIVEC ) ) {
-				common->Printf( "CPU does not support AltiVec\n" );
-				return;
-			}
-			p_simd = new idSIMD_AltiVec();
 		} else {
 			common->Printf( "invalid argument, use: MMX, 3DNow, SSE, SSE2, SSE3, AltiVec\n" );
 			return;

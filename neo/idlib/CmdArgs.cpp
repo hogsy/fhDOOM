@@ -76,7 +76,7 @@ const char *idCmdArgs::Args(  int start, int end, bool escapeArgs ) const {
 				if ( *p == '\\' ) {
 					strcat( cmd_args, "\\\\" );
 				} else {
-					int l = strlen( cmd_args );
+					size_t l = strlen( cmd_args );
 					cmd_args[ l ] = *p;
 					cmd_args[ l+1 ] = '\0';
 				}

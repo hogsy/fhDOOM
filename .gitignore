@@ -47,3 +47,6 @@ build
 
 *.aas48
 *.proc
+
+# VSCode Generated Garbage
+/.vs

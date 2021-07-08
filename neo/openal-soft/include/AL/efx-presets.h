@@ -3,7 +3,9 @@
 #ifndef EFX_PRESETS_H
 #define EFX_PRESETS_H
 
-struct EFXEAXREVERBPROPERTIES {
+#ifndef EFXEAXREVERBPROPERTIES_DEFINED
+#define EFXEAXREVERBPROPERTIES_DEFINED
+typedef struct {
     float flDensity;
     float flDiffusion;
     float flGain;
@@ -27,7 +29,8 @@ struct EFXEAXREVERBPROPERTIES {
     float flLFReference;
     float flRoomRolloffFactor;
     int   iDecayHFLimit;
-};
+} EFXEAXREVERBPROPERTIES, *LPEFXEAXREVERBPROPERTIES;
+#endif
 
 /* Default Presets */
 

@@ -153,7 +153,7 @@ source_group(game\\GameSys gamesys/.*)
 source_group(game\\Physics physics/.*)  
 source_group(game\\Script script/.*)  
 
-IF(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT ID_ENFORCE32BIT)
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8 AND ID_ENFORCE32BIT=OFF)
   set(TARGET_NAME "fhGame-x64")
 ELSE()
   set(TARGET_NAME "fhGame-x86")

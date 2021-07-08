@@ -1116,7 +1116,7 @@ void *Mem_Alloc16( const int size ) {
 	}
 	void *mem = mem_heap->Allocate16( size );
 	// make sure the memory is 16 byte aligned
-	assert( ( ((int)mem) & 15) == 0 );
+	assert( ( ((INT_PTR)mem) & 15) == 0 );
 	return mem;
 }
 
@@ -1137,7 +1137,7 @@ void Mem_Free16( void *ptr ) {
 		return;
 	}
 	// make sure the memory is 16 byte aligned
-	assert( ( ((int)ptr) & 15) == 0 );
+	assert((((INT_PTR)ptr) & 15) == 0);
  	mem_heap->Free16( ptr );
 }
 

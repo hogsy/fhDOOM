@@ -976,29 +976,29 @@ IF(MSVC)
   source_group(Tools\\Sound tools/sound/.*)
   source_group(Ui ui/.*)
 
-  #SET(WINSDK_LIB_DIR "$ENV{ProgramFiles}/Windows Kits/10/Lib/10.0.19041.0/um/x86")
-  #IF(NOT IS_DIRECTORY ${WINSDK_LIB_DIR})
-	#message("Windows 10 SDK not found: ${WINSDK_LIB_DIR}")
-  #SET(PROGRAM_FILES_X86 "ProgramFiles(x86)")
-	#SET(WINSDK_LIB_DIR "$ENV{${PROGRAM_FILES_X86}}/Windows Kits/10/Lib/10.0.19041.0/um/x86")
-
-	#IF(NOT IS_DIRECTORY ${WINSDK_LIB_DIR})
-	#	message("Windows 10 SDK not found either: ${WINSDK_LIB_DIR}")
-	#	message( FATAL_ERROR "Please install Windows 10 SDK" )
-	#ENDIF()
-  #ENDIF()
-
-  SET(EXTERNAL_LIBS
-    opengl32.lib
-    Glu32.lib
-    Dbghelp.lib
-    wsock32.lib
-    iphlpapi.lib
-    "${CMAKE_CURRENT_SOURCE_DIR}/openal-soft/common.lib"
-    "${CMAKE_CURRENT_SOURCE_DIR}/openal-soft/openal32.lib"
-    dinput8.lib
-    dsound.lib
-    dxguid.lib)
+  IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        SET(EXTERNAL_LIBS
+        opengl32.lib
+        Glu32.lib
+        Dbghelp.lib
+        wsock32.lib
+        iphlpapi.lib
+        "${CMAKE_CURRENT_SOURCE_DIR}/openal-soft/libs/Win64/OpenAL32.lib"
+        dinput8.lib
+        dsound.lib
+        dxguid.lib)
+  ELSE()
+      SET(EXTERNAL_LIBS
+        opengl32.lib
+        Glu32.lib
+        Dbghelp.lib
+        wsock32.lib
+        iphlpapi.lib
+        "${CMAKE_CURRENT_SOURCE_DIR}/openal-soft/libs/Win32/OpenAL32.lib"
+        dinput8.lib
+        dsound.lib
+        dxguid.lib)
+    ENDIF()
 ENDIF()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -1051,7 +1051,11 @@ set(TARGET_NAME "fhDOOM")
 add_definitions(-DGLEW_STATIC -D__DOOM__ -D__DOOM_DLL__)
 add_executable(${TARGET_NAME} ${SOURCES})
 target_link_libraries(${TARGET_NAME} ${LINK_LIBS})
-add_dependencies(${TARGET_NAME} fhGame-x86 fhGame-roe-x86)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND ID_ENFORCE32BIT=OFF)
+  add_dependencies(${TARGET_NAME} fhGame-x64 fhGame-roe-x64)
+else()
+  add_dependencies(${TARGET_NAME} fhGame-x86 fhGame-roe-x86)
+endif()
 
 if(Qt5Widgets_FOUND)
   add_dependencies(${TARGET_NAME} Qt5CopyBinaries)
@@ -1064,14 +1068,25 @@ if(MSVC)
 
   set_property(TARGET ${TARGET_NAME} PROPERTY FOLDER exes)
 
+    IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
   add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E make_directory   "${CMAKE_BINARY_DIR}/bin/Debug"
 	  COMMAND ${CMAKE_COMMAND} -E make_directory   "${CMAKE_BINARY_DIR}/bin/Release"
 	  COMMAND ${CMAKE_COMMAND} -E make_directory   "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo"
-      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/OpenAL32.dll  ${CMAKE_BINARY_DIR}/bin/Debug/
-      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/OpenAL32.dll  ${CMAKE_BINARY_DIR}/bin/Release/
-      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/OpenAL32.dll  ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/bin/Win64/soft_oal.dll  ${CMAKE_BINARY_DIR}/bin/Debug/
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/bin/Win64/soft_oal.dll  ${CMAKE_BINARY_DIR}/bin/Release/
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/bin/Win64/soft_oal.dll  ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/
   )
+  ELSE()
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory   "${CMAKE_BINARY_DIR}/bin/Debug"
+	  COMMAND ${CMAKE_COMMAND} -E make_directory   "${CMAKE_BINARY_DIR}/bin/Release"
+	  COMMAND ${CMAKE_COMMAND} -E make_directory   "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo"
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/bin/Win32/soft_oal.dll  ${CMAKE_BINARY_DIR}/bin/Debug/
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/bin/Win32/soft_oal.dll  ${CMAKE_BINARY_DIR}/bin/Release/
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/neo/openal-soft/bin/Win32/soft_oal.dll  ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/
+  )
+  ENDIF()
 endif()
 
 set_cpu_arch(${TARGET_NAME})

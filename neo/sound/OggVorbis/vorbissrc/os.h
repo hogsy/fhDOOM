@@ -107,7 +107,7 @@ static inline int vorbis_ftoi(double f){  /* yes, double!  Otherwise,
 #endif
 
 
-#if defined(_WIN32) && !defined(__GNUC__) && !defined(__BORLANDC__)
+#if defined(_MSC_VER) && defined(_M_IX86) && !defined(_WIN32_WCE)
 #  define VORBIS_FPU_CONTROL
 
 typedef ogg_int16_t vorbis_fpu_control;
@@ -129,6 +129,27 @@ static __inline void vorbis_fpu_restore(vorbis_fpu_control fpu){
 
 #endif
 
+/* Optimized code path for x86_64 builds. Uses SSE2 intrinsics. This can be
+   done safely because all x86_64 CPUs supports SSE2. */
+#if (defined(_MSC_VER) && defined(_M_X64)) || (defined(__GNUC__) && defined (__SSE2_MATH__))
+#  define VORBIS_FPU_CONTROL
+
+typedef ogg_int16_t vorbis_fpu_control;
+
+#include <emmintrin.h>
+static __inline int vorbis_ftoi(double f){
+        return _mm_cvtsd_si32(_mm_load_sd(&f));
+}
+
+static __inline void vorbis_fpu_setround(vorbis_fpu_control *fpu){
+  (void)fpu;
+}
+
+static __inline void vorbis_fpu_restore(vorbis_fpu_control fpu){
+  (void)fpu;
+}
+
+#endif /* Special MSVC x64 implementation */
 
 #ifndef VORBIS_FPU_CONTROL
 

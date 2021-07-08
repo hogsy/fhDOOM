@@ -1660,7 +1660,6 @@ idElevator::Spawn
 */
 void idElevator::Spawn( void ) {
 	idStr str;
-	int len1;
 
 	lastFloor = 0;
 	currentFloor = 0;
@@ -1670,7 +1669,7 @@ void idElevator::Spawn( void ) {
 	returnTime = spawnArgs.GetFloat( "returnTime" );
 	returnFloor = spawnArgs.GetInt( "returnFloor" );
 
-	len1 = strlen( "floorPos_" );
+	size_t len1 = strlen( "floorPos_" );
 	const idKeyValue *kv = spawnArgs.MatchPrefix( "floorPos_", NULL );
 	while( kv ) {
 		str = kv->GetKey().Right( kv->GetKey().Length() - len1 );

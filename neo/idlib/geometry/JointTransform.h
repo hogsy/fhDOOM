@@ -38,12 +38,25 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 class idJointQuat {
-public:
+  public:
+	const float *ToFloatPtr() const { return q.ToFloatPtr(); }
+	float *ToFloatPtr() { return q.ToFloatPtr(); }
 
-	idQuat			q;
-	idVec3			t;
+	idQuat q;
+	idVec3 t;
+	float w;
 };
 
+// offsets for SIMD code
+#define JOINTQUAT_SIZE (8 * 4) // sizeof( idJointQuat )
+#define JOINTQUAT_SIZE_SHIFT 5 // log2( sizeof( idJointQuat ) )
+#define JOINTQUAT_Q_OFFSET (0 * 4) // offsetof( idJointQuat, q )
+#define JOINTQUAT_T_OFFSET (4 * 4) // offsetof( idJointQuat, t )
+
+static_assert(sizeof(idJointQuat) == JOINTQUAT_SIZE, "Invalid idJointQuat size!");
+static_assert(sizeof(idJointQuat) == (1 << JOINTQUAT_SIZE_SHIFT), "Invalid idJointQuat size!");
+static_assert(offsetof(idJointQuat, q) == JOINTQUAT_Q_OFFSET, "Invalid idJointQuat size!");
+static_assert(offsetof(idJointQuat, t) == JOINTQUAT_T_OFFSET, "Invalid idJointQuat size!");
 
 /*
 ===============================================================================
@@ -86,6 +99,10 @@ public:
 private:
 	float			mat[3*4];
 };
+
+// offsets for SIMD code
+#define JOINTMAT_SIZE (4 * 3 * 4) // sizeof( idJointMat )
+static_assert(sizeof(idJointMat) == JOINTMAT_SIZE, "Invalid idJointMat size!");
 
 ID_INLINE void idJointMat::SetRotation( const idMat3 &m ) {
 	// NOTE: idMat3 is transposed because it is column-major

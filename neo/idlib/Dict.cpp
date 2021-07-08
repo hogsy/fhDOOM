@@ -436,7 +436,7 @@ WriteString
 ================
 */
 static void WriteString( const char *s, idFile *f ) {
-	int	len = strlen( s );
+	size_t len = strlen( s );
 	if ( len >= MAX_STRING_CHARS-1 ) {
 		idLib::common->Error( "idDict::WriteToFileHandle: bad string" );
 	}

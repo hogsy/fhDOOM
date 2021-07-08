@@ -237,7 +237,7 @@ bool idLangDict::ExcludeString( const char *str ) const {
 		return true;
 	}
 
-	int c = strlen( str );
+	size_t c = strlen( str );
 	if ( c <= 1 ) {
 		return true;
 	}
@@ -254,7 +254,7 @@ bool idLangDict::ExcludeString( const char *str ) const {
 		return true;
 	}
 
-	int i;
+	size_t i;
 	for ( i = 0; i < c; i++ ) {
 		if ( isalpha( str[i] ) ) {
 			break;

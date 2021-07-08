@@ -573,13 +573,13 @@ bool Swap_IsBigEndian( void ) {
 ===============================================================================
 */
 
+idCVar com_assertOutOfDebugger("com_assertOutOfDebugger", "0", CVAR_BOOL,
+							   "by default, do not assert while not running under the debugger");
+
 void AssertFailed( const char *file, int line, const char *expression ) {
-	idLib::sys->DebugPrintf( "\n\nASSERTION FAILED!\n%s(%d): '%s'\n", file, line, expression );
-#ifdef _WIN32
-	__asm int 0x03
-#elif defined( __linux__ )
-	__asm__ __volatile__ ("int $0x03");
-#elif defined( MACOS_X )
-	kill( getpid(), SIGINT );
-#endif
+	idLib::Warning("\n\nASSERTION FAILED!\n%s(%d): '%s'\n", file, line, expression);
+
+	if (IsDebuggerPresent() || com_assertOutOfDebugger.GetBool()) {
+		__debugbreak();
+	}
 }

@@ -117,7 +117,7 @@ END_MESSAGE_MAP()
  =======================================================================================================================
  =======================================================================================================================
  */
-LONG WINAPI CamWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT WINAPI CamWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	RECT	rect;
 
 	GetClientRect(hWnd, &rect);
@@ -1884,7 +1884,7 @@ void CCamWnd::Cam_Render() {
 }
 
 
-void CCamWnd::OnTimer(UINT nIDEvent)
+void CCamWnd::OnTimer(UINT_PTR nIDEvent)
 {
 	if ((renderMode && animationMode) || nIDEvent == 1) {
 		Sys_UpdateWindows(W_CAMERA);

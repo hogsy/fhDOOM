@@ -123,7 +123,7 @@ void GetSelectionIndex (int *ent, int *brush)
 	;
 }
 
-BOOL CALLBACK FindBrushDlgProc (
+static INT_PTR CALLBACK FindBrushDlgProc (
     HWND hwndDlg,	// handle to dialog box
     UINT uMsg,	// message
     WPARAM wParam,	// first message parameter
@@ -184,7 +184,7 @@ void DoFind(void)
 
 bool g_bDoCone = false;
 bool g_bDoSphere = false;
-BOOL CALLBACK SidesDlgProc (
+static INT_PTR CALLBACK SidesDlgProc (
     HWND hwndDlg,	// handle to dialog box
     UINT uMsg,	// message
     WPARAM wParam,	// first message parameter
@@ -242,7 +242,7 @@ void DoSides(bool bCone, bool bSphere, bool bTorus)
 DoAbout
 ===================
 */
-BOOL CALLBACK AboutDlgProc( HWND hwndDlg,
+static INT_PTR CALLBACK AboutDlgProc( HWND hwndDlg,
 						    UINT uMsg,
 						    WPARAM wParam,
 						    LPARAM lParam )
